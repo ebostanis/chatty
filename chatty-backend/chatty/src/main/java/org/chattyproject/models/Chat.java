@@ -3,6 +3,9 @@ package org.chattyproject.models;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "chats", schema = "public")
 @Getter
@@ -27,5 +30,8 @@ public class Chat {
     @Basic
     @Column(name = "archived")
     private Boolean archived;
+
+    @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages = new ArrayList<>();
 
 }
