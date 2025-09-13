@@ -9,7 +9,12 @@ import org.chattyproject.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class MessageServiceImpl implements MessageService {
@@ -17,6 +22,7 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final ChatService chatService;
     private final LlmClient llmClient;
+    Instant instant = Instant.now();
 
     @Autowired
     public MessageServiceImpl(MessageRepository messageRepository, ChatService chatService, LlmClient llmClient) {
@@ -33,14 +39,24 @@ public class MessageServiceImpl implements MessageService {
         userMessage.setChat(chat);
         userMessage.setRole("user");
         userMessage.setContent(content);
+        userMessage.setCreatedAt(LocalDateTime.ofInstant(instant, ZoneOffset.UTC));
         messageRepository.save(userMessage);
 
-        String reply = llmClient.generateReply(content);
+        List<Message> history = messageRepository.findByChatId(chatId);
+
+        List<Map<String, String>> messages = history.stream()
+                .map(m -> Map.of("role", m.getRole(), "content", m.getContent()))
+                .collect(Collectors.toList());
+
+        messages.add(Map.of("role", "user", "content", content));
+
+        String reply = llmClient.generateReply(messages);
 
         Message llmMessage = new Message();
         llmMessage.setChat(chat);
         llmMessage.setRole("assistant");
-        llmMessage.setContent(content);
+        llmMessage.setContent(reply);
+        llmMessage.setCreatedAt(LocalDateTime.ofInstant(instant, ZoneOffset.UTC));
         messageRepository.save(llmMessage);
 
         return List.of(userMessage, llmMessage);

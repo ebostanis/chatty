@@ -13,7 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class ChatServiceImpl implements ChatService {
@@ -46,8 +49,16 @@ public class ChatServiceImpl implements ChatService {
         userMessage.setContent(firstMessageContent);
         messageRepository.save(userMessage);
 
+        List<Message> history = messageRepository.findByChatId(chat.getId());
+
+        List<Map<String, String>> messages = history.stream()
+                .map(m -> Map.of("role", m.getRole(), "content", m.getContent()))
+                .collect(Collectors.toList());
+
+        messages.add(Map.of("role", "user", "content", firstMessageContent));
+
         String title = llmClient.generateTitle(firstMessageContent);
-        String llmReply = llmClient.generateReply(firstMessageContent);
+        String llmReply = llmClient.generateReply(messages);
 
         chat.setTitle(title);
 
