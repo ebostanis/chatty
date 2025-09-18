@@ -34,15 +34,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateCurrentUser(UpdateUserRequest request) {
 
-        if (userRepository.existsByEmail(request.email())) {
+        User user = getCurrentUser();
+
+        if (!bCryptPasswordEncoder.matches(request.password(),  user.getPassword())) {
+            user.setPasswordHash(bCryptPasswordEncoder.encode(request.password()));
+            user.setSubscription(request.subscription());
+            return userRepository.save(user);
+        } else {
             throw new ResponseStatusException(HttpStatus.CONFLICT);
         }
 
-        User user = getCurrentUser();
-        user.setEmail(request.email());
-        user.setPasswordHash(bCryptPasswordEncoder.encode(request.password()));
-        user.setSubscription(request.subscription());
-        return userRepository.save(user);
     }
 
     @Override

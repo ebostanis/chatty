@@ -2,6 +2,7 @@ package org.chattyproject.models;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -30,8 +31,8 @@ public class Message {
     @Column(name = "content", nullable = false)
     private String content;
 
-    @Basic
-    @Column(name = "created_at")
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
 }

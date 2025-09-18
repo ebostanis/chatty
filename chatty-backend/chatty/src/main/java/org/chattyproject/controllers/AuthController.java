@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private static final Logger log = LoggerFactory.getLogger(AuthController.class);
 
     private AuthService authService;
 
@@ -30,7 +29,6 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<AuthResponse> signup(@Valid @RequestBody SignUpRequest request) {
-        log.info("reached signup");
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signUp(request));
     }
 

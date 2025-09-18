@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/chats")
@@ -40,16 +39,12 @@ public class ChatController {
                 .toList());
     }
 
-    @GetMapping("/chats/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<ChatResponse> getChat(@PathVariable Long id) {
 
-        try {
-            Chat chat = chatService.getChatById(id);
-            ChatResponse chatResponse = toChatResponse(chat);
-            return ResponseEntity.ok(chatResponse);
-        } catch (ResponseStatusException e) {
-            throw e;
-        }
+        Chat chat = chatService.getChatById(id);
+        ChatResponse chatResponse = toChatResponse(chat);
+        return ResponseEntity.ok(chatResponse);
     }
 
     private ChatResponse toChatResponse(Chat chat) {

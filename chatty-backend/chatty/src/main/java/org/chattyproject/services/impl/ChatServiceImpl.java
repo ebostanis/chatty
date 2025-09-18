@@ -49,13 +49,11 @@ public class ChatServiceImpl implements ChatService {
         userMessage.setContent(firstMessageContent);
         messageRepository.save(userMessage);
 
-        List<Message> history = messageRepository.findByChatId(chat.getId());
+        List<Message> history = messageRepository.findByChatIdOrderByCreatedAtAsc(chat.getId());
 
         List<Map<String, String>> messages = history.stream()
                 .map(m -> Map.of("role", m.getRole(), "content", m.getContent()))
                 .collect(Collectors.toList());
-
-        messages.add(Map.of("role", "user", "content", firstMessageContent));
 
         String title = llmClient.generateTitle(firstMessageContent);
         String llmReply = llmClient.generateReply(messages);
@@ -74,7 +72,7 @@ public class ChatServiceImpl implements ChatService {
     @Override
     public List<Chat> getAllChats() {
         User currentUser = userService.getCurrentUser();
-        return chatRepository.findAllByUserId(currentUser.getId());
+        return chatRepository.findAllByUserIdOrderByIdDesc(currentUser.getId());
     }
 
     @Override

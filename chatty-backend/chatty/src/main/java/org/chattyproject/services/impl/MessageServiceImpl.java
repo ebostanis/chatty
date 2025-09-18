@@ -9,9 +9,6 @@ import org.chattyproject.services.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,7 +19,6 @@ public class MessageServiceImpl implements MessageService {
     private final MessageRepository messageRepository;
     private final ChatService chatService;
     private final LlmClient llmClient;
-    Instant instant = Instant.now();
 
     @Autowired
     public MessageServiceImpl(MessageRepository messageRepository, ChatService chatService, LlmClient llmClient) {
@@ -39,16 +35,13 @@ public class MessageServiceImpl implements MessageService {
         userMessage.setChat(chat);
         userMessage.setRole("user");
         userMessage.setContent(content);
-        userMessage.setCreatedAt(LocalDateTime.ofInstant(instant, ZoneOffset.UTC));
         messageRepository.save(userMessage);
 
-        List<Message> history = messageRepository.findByChatId(chatId);
+        List<Message> history = messageRepository.findByChatIdOrderByCreatedAtAsc(chatId);
 
         List<Map<String, String>> messages = history.stream()
                 .map(m -> Map.of("role", m.getRole(), "content", m.getContent()))
                 .collect(Collectors.toList());
-
-        messages.add(Map.of("role", "user", "content", content));
 
         String reply = llmClient.generateReply(messages);
 
@@ -56,17 +49,16 @@ public class MessageServiceImpl implements MessageService {
         llmMessage.setChat(chat);
         llmMessage.setRole("assistant");
         llmMessage.setContent(reply);
-        llmMessage.setCreatedAt(LocalDateTime.ofInstant(instant, ZoneOffset.UTC));
         messageRepository.save(llmMessage);
 
-        return List.of(userMessage, llmMessage);
+        return messageRepository.findByChatIdOrderByCreatedAtAsc(chatId);
     }
 
 
     @Override
     public List<Message> getMessagesForChat(Long chatId) {
         Chat chat = chatService.getChatById(chatId);
-        return messageRepository.findByChatId(chat.getId());
+        return messageRepository.findByChatIdOrderByCreatedAtAsc(chat.getId());
     }
 
 }
