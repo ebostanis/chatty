@@ -194,7 +194,7 @@ chatty/
 ### Quick Start with Docker
 1. **Clone the repository**
    ```bash
-   git clone 
+   git clone https://github.com/ebostanis/chatty.git
    cd chatty
    ```
 
