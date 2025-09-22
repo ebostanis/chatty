@@ -20,7 +20,7 @@ public class JwtUtil {
     private final Duration expirationTime;
 
     public JwtUtil(@Value("${jwt.secret}") String secret,
-                   @Value("${jwt.expirationTime}") Duration expirationTime) {
+                   @Value("${jwt.expiration-time}") Duration expirationTime) {
         this.key = Keys.hmacShaKeyFor(secret.getBytes());
         this.expirationTime = expirationTime;
     }

@@ -11,9 +11,9 @@
 4||10|c|G
 4||10|C|G
 4||10|T|G</Grants>
-      <IntrospectionStateNumber>771</IntrospectionStateNumber>
+      <IntrospectionStateNumber>893</IntrospectionStateNumber>
       <ServerVersion>17.5</ServerVersion>
-      <StartupTime>1756448782</StartupTime>
+      <StartupTime>1758546007</StartupTime>
       <TimeZones>true ACDT
 true ACSST
 false ACST
@@ -239,7 +239,7 @@ false America/Rio_Branco
 false America/Rosario
 true America/Santa_Isabel
 false America/Santarem
-false America/Santiago
+true America/Santiago
 false America/Santo_Domingo
 false America/Sao_Paulo
 true America/Scoresbysund
@@ -437,7 +437,7 @@ false CHAST
 false CHUT
 false CKT
 true CLST
-false CLT
+true CLT
 false COT
 false CST
 true CST6CDT
@@ -450,13 +450,13 @@ true Canada/Newfoundland
 true Canada/Pacific
 false Canada/Saskatchewan
 false Canada/Yukon
-false Chile/Continental
-false Chile/EasterIsland
+true Chile/Continental
+true Chile/EasterIsland
 true Cuba
 false DAVT
 false DDUT
-false EASST
-false EAST
+true EASST
+true EAST
 false EAT
 true EDT
 true EEST
@@ -692,7 +692,7 @@ false Pacific/Auckland
 false Pacific/Bougainville
 false Pacific/Chatham
 false Pacific/Chuuk
-false Pacific/Easter
+true Pacific/Easter
 false Pacific/Efate
 false Pacific/Enderbury
 false Pacific/Fakaofo
@@ -809,7 +809,7 @@ false Zulu
 14751||10|C|G
 14751||-9223372036854775808|U|G
 14751||10|U|G</Grants>
-      <IntrospectionStateNumber>771</IntrospectionStateNumber>
+      <IntrospectionStateNumber>893</IntrospectionStateNumber>
       <ObjectId>16402</ObjectId>
       <OwnerName>postgres</OwnerName>
     </database>
@@ -4236,8 +4236,8 @@ false Zulu
     <schema id="265" parent="2" name="public">
       <Comment>standard public schema</Comment>
       <Current>1</Current>
-      <IntrospectionStateNumber>771</IntrospectionStateNumber>
-      <LastIntrospectionLocalTimestamp>2025-08-29.08:17:52</LastIntrospectionLocalTimestamp>
+      <IntrospectionStateNumber>893</IntrospectionStateNumber>
+      <LastIntrospectionLocalTimestamp>2025-09-22.13:37:37</LastIntrospectionLocalTimestamp>
       <ObjectId>2200</ObjectId>
       <StateNumber>532</StateNumber>
       <OwnerName>pg_database_owner</OwnerName>
@@ -4294,7 +4294,7 @@ false Zulu
     </table>
     <table id="273" parent="265" name="users">
       <ObjectId>16413</ObjectId>
-      <StateNumber>769</StateNumber>
+      <StateNumber>781</StateNumber>
       <AccessMethodId>2</AccessMethodId>
       <OwnerName>postgres</OwnerName>
     </table>
@@ -4522,9 +4522,9 @@ false Zulu
     <column id="304" parent="273" name="password_hash">
       <NotNull>1</NotNull>
       <Position>3</Position>
-      <StateNumber>769</StateNumber>
-      <StoredType>text|0s</StoredType>
-      <TypeId>25</TypeId>
+      <StateNumber>781</StateNumber>
+      <StoredType>varchar(255)|0s</StoredType>
+      <TypeId>1043</TypeId>
     </column>
     <column id="305" parent="273" name="subscription">
       <Position>4</Position>
@@ -4537,16 +4537,31 @@ false Zulu
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16419</ObjectId>
       <Primary>1</Primary>
-      <StateNumber>769</StateNumber>
+      <StateNumber>781</StateNumber>
       <Unique>1</Unique>
       <AccessMethodId>403</AccessMethodId>
     </index>
-    <key id="307" parent="273" name="users_pkey">
+    <index id="307" parent="273" name="uk_users_email">
+      <ColNames>email</ColNames>
+      <ObjectId>16459</ObjectId>
+      <StateNumber>781</StateNumber>
+      <Unique>1</Unique>
+      <AccessMethodId>403</AccessMethodId>
+      <CollationNames>default</CollationNames>
+      <CollationIds>100</CollationIds>
+      <CollationParentNames>pg_catalog</CollationParentNames>
+    </index>
+    <key id="308" parent="273" name="users_pkey">
       <NameSurrogate>1</NameSurrogate>
       <ObjectId>16420</ObjectId>
       <Primary>1</Primary>
       <StateNumber>769</StateNumber>
       <UnderlyingIndexId>16419</UnderlyingIndexId>
+    </key>
+    <key id="309" parent="273" name="uk_users_email">
+      <ObjectId>16460</ObjectId>
+      <StateNumber>781</StateNumber>
+      <UnderlyingIndexId>16459</UnderlyingIndexId>
     </key>
   </database-model>
 </dataSource>

@@ -35,7 +35,7 @@ public class UserController {
     @DeleteMapping("/profile")
     public ResponseEntity<Void> deleteCurrentUser() {
         userService.deleteCurrentUser();
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.noContent().build();
     }
 
     private UserResponse toUserResponse(User user) {
