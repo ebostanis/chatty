@@ -15,8 +15,8 @@ spring:
 
   security:
     user:
-      name: ${SECURITY_USER}
-      password: ${SECURITY_PASSWORD}
+      name: ${SECURITY_USER:admin}
+      password: ${SECURITY_PASSWORD:devPassword123}
 
 jwt:
   secret: ${JWT_SECRET}
