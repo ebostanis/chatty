@@ -20,10 +20,10 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET}
-  expiration-time: ${JWT_EXPIRATION_TIME}
+  expiration-time: ${JWT_EXPIRATION_TIME:3600000}
 
 llm:
   api:
     key: ${LLM_API_KEY}
-    base-url: ${LLM_API_BASE_URL}
-  model: ${LLM_MODEL}
+    base-url: ${LLM_API_BASE_URL:https://api.groq.com/openai/v1}
+  model: ${LLM_MODEL:llama-3.1-8b-instant}
