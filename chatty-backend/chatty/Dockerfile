@@ -1,14 +1,11 @@
-# Lightweight image for production
-FROM eclipse-temurin:24-jre-alpine
-
-# Set the working directory
+# Stage 1: Build the JAR
+FROM eclipse-temurin:21-jdk-alpine AS build
 WORKDIR /app
+COPY . .
+RUN ./mvnw clean package -DskipTests
 
-# Copy the jar file
-COPY target/chatty-1.0-SNAPSHOT.jar app.jar
-
-# Expose default port
-EXPOSE 8080
-
-# Launch the spring boot app
+# Stage 2: Run the JAR
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=build /app/target/chatty-1.0-SNAPSHOT.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
