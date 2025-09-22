@@ -1,0 +1,76 @@
+services:
+  chatty-frontend:
+    container_name: chatty-frontend
+    build:
+      context: ./chatty-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_API_BASE_URL: http://chatty-backend:8080
+      TZ: Europe/Athens
+    depends_on:
+      - chatty-backend
+    networks:
+      - chatty-network
+
+  chatty-backend:
+    container_name: chatty-backend
+    build:
+      context: ./chatty-backend/chatty
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      DB_HOST: chatty-postgres
+      DB_PORT: 5432
+      DB_NAME: chattybase
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      JWT_SECRET: ${JWT_SECRET:-changeme}
+      JWT_EXPIRATION_TIME: ${JWT_EXPIRATION_TIME}
+      SECURITY_USER: ${SECURITY_USER}
+      SECURITY_PASSWORD: ${SECURITY_PASSWORD}
+      LLM_API_KEY: ${LLM_API_KEY}
+      LLM_API_BASE_URL: ${LLM_API_BASE_URL}
+      LLM_MODEL: ${LLM_MODEL}
+      TZ: Europe/Athens
+    volumes:
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    secrets:
+      - jwt_secret
+      - api_token
+    depends_on:
+      - chatty-postgres
+    networks:
+      - chatty-network
+
+  chatty-postgres:
+    container_name: chatty-postgres
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: chattybase
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      TZ: Europe/Athens
+      PGTZ: Europe/Athens
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - chatty-network
+
+volumes:
+  pgdata:
+
+networks:
+  chatty-network:
+
+secrets:
+  jwt_secret:
+    file: ./secrets/jwt_secret.txt
+  api_token:
+    file: ./secrets/llm-api-token.txt
+
