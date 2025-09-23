@@ -1,11 +1,30 @@
-# Stage 1: Build the JAR
-FROM eclipse-temurin:21-jdk-alpine AS build
-WORKDIR /app
-COPY . .
-RUN ./mvnw clean package -DskipTests
+FROM maven:3.9 AS builder
 
-# Stage 2: Run the JAR
-FROM eclipse-temurin:21-jre-alpine
+# Set working directory
 WORKDIR /app
-COPY --from=build /app/target/chatty-1.0-SNAPSHOT.jar app.jar
-ENTRYPOINT ["java", "-jar", "app.jar"]
+
+# Copy pom.xml first (for better caching)
+COPY pom.xml ./
+
+# Download dependencies (this layer will be cached if pom.xml doesn't change)
+RUN mvn dependency:resolve
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Runtime stage
+FROM eclipse-temurin:21-jre-alpine-3.22
+
+WORKDIR /app
+
+# Copy the built JAR from builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Expose port
+EXPOSE 8080
+
+# Run the application
+CMD ["java", "-jar", "app.jar"]
